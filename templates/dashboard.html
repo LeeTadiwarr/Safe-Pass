@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Sidebar 05</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+		
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="{{url_for('static', filename='css/dashboard.css')}}">
+  </head>
+  <body>
+		
+		<div class="wrapper d-flex align-items-stretch">
+			<nav id="sidebar">
+				<div class="custom-menu">
+					<button type="button" id="sidebarCollapse" class="btn btn-primary">
+	          <i class="fa fa-bars"></i>
+	          <span class="sr-only">Toggle Menu</span>
+	        </button>
+        </div>
+				<div class="p-4">
+		  		<h1><a href="{{url_for('index')}}" class="logo">Safe Pass<span>Password Manager</span></a></h1>
+	        <ul class="list-unstyled components mb-5">
+
+	          <li class="active">
+	            <a href="{{url_for('dashboard')}}"><span class="fa fa-shield mr-3"></span>Security Dashboard</a>
+	          </li>
+			  <li>
+				<a href="{{url_for('passwords')}}"><span class="fa fa-key mr-3"></span>Passwords</a>
+				</li>
+			  <li>
+	              <a href="{{url_for('cards')}}"><span class="fa fa-credit-card mr-3"></span>Bank Cards</a>
+	          </li>
+	          <li>
+              <a href="{{url_for('notes')}}"><span class="fa fa-sticky-note mr-3"></span>Notes</a>
+	          </li>
+	          <li>
+              <a href="{{url_for('settings')}}"><span class="fa fa-cog mr-3"></span>Account Settings</a>
+	          </li>
+	          <li>
+              <a href="{{url_for('help')}}"><span class="fa fa-question-circle mr-3"></span> Help</a>
+	          </li>
+			  <li>
+				<a href="{{url_for('terms')}}"><span class="fa fa-file-text mr-3"></span>Terms & Conditions</a>
+			</li>
+	          <li>
+              <a href="{{url_for('logout')}}"><span class="fa fa-sign-out mr-3"></span>Logout</a>
+	          </li>
+	        </ul>
+
+	        <div class="mb-5">
+	          </form>
+					</div>
+
+	        <div class="footer">
+	        	<p>
+					<p>© <span>Copyright</span> <strong class="px-1 sitename">Safe Pass</strong> <span>All Rights Reserved</span></p>
+				</p>
+	        </div>
+
+	      </div>
+    	</nav>
+
+        <!-- Page Content  -->
+      <div id="content" class="p-4 p-md-5 pt-5">
+
+
+        <div class="row g-4">
+			<!-- Left Card (1/3 of space) -->
+			<div class="col-md-4">
+				<div class="card">
+					
+					<div class="card-body">
+						<h4 class="card-title">Welcome to Your Security Vault, {{name}}!</h4>
+						<p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+					</div>
+				</div>
+			</div>
+		
+			<!-- Right Card (2/3 of space) -->
+			<div class="col-md-8">
+				<div class="card text-white p-2" style="background-color: #6a0dad; border-radius: 10px;">
+					<h6 class="mb-3">Password Health</h6>
+					
+					<div class="row">
+						<!-- Left Side Stats -->
+						<div class="col-6">
+							<div class="p-3 mb-2 text-center" style="background: rgba(255, 255, 255, 0.2); border-radius: 8px;">
+								<h3 class="mb-0">{{total_passwords}}</h3>
+								<small>Total Password</small>
+							</div>
+							<div class="p-3 text-center" style="background: rgba(255, 255, 255, 0.2); border-radius: 8px;">
+								<h3 class="mb-0">{{strong_count}}</h3>
+								<small>Secure Password</small>
+							</div>
+						</div>
+			
+						<!-- Right Side Stats -->
+						<div class="col-6">
+							<div class="p-2 text-center fw-bold" style="background: white; color: #dc3545; border-radius: 8px;">
+								<h4 class="mb-0">{{weak_count}}</h4>
+								<small>Weak Password</small>
+							</div>
+						</div>
+					</div>
+			
+					<!-- Score Health Progress Bar -->
+					<div class="mt-3">
+						<small>Score Health</small>
+						<div class="progress" style="height: 8px;">
+							<div class="progress-bar" style="width: 80%; background-color: #30d5c8;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="row mt-4 row-cols-2 row-cols-md-3 g-5">
+
+			<div class="col">
+			  <div class="card">
+				<div class="card-body">
+				  <h4 class="card-title"><span class="fa fa-credit-card"></span>Bank Cards Saved</h4>
+				  <p class="card-text">You have saved {{total_cards}} Bank Cards</p>
+				</div>
+			  </div>
+			</div>
+
+			<div class="col">
+			  <div class="card">
+				
+				<div class="card-body">
+				  <h4 class="card-title"><span class="fa fa-sticky-note"></span>Notes</h4>
+				  <p class="card-text">You have saved {{total_notes}} Notes.</p>
+				</div>
+			  </div>
+			</div>
+		  
+        
+
+      </div>
+		</div>
+		
+    <script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/popper.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js'	)}}"></script>
+    <script src="{{url_for('static', filename='js/dashboard.js')}}"></script>
+  </body>
+</html>

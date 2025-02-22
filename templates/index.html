@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Safe Pass Home</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Main Icons -->
+  <link href="{{url_for('static', filename='/img/cyber-security.png')}}" rel="icon">
+  <link href="{{url_for('static', filename='/img/cyber-security_3.png')}}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{{url_for('static', filename='/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='/vendor/aos/aos.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="{{url_for('index')}}" class="logo d-flex align-items-center me-auto">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <img src="{{url_for('static', filename='/img/cyber-security_3.png')}}" alt="">
+        <h1 class="sitename">SafePass</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home<br></a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+      <a class="btn-getstarted" href="{{url_for('login')}}">Login</a>
+      <a class="btn-getstarted" href="{{url_for('register')}}">Get Started</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+      <img src="{{url_for('static', filename='/img/hero-bg-abstract.jpg')}}" alt="" data-aos="fade-in" class="">
+
+      <div class="container">
+        <div class="row justify-content-center" data-aos="zoom-out">
+          <div class="col-xl-7 col-lg-9 text-center">
+            <h1>Every login lives in Safe Pass</h1>
+            <p>Safe Pass is the best password manager for securely storing, managing, and sharing sensitive online data such as passwords, passkeys, and credit cards.</p>
+          </div>
+        </div>
+        <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
+          <a href="{{url_for('register')}}" class="btn-get-started">Get Started</a>
+        </div>
+
+        <div class="row gy-4 mt-5">
+          <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="100">
+            <div class="icon-box">
+              <div class="icon"><i class="bi bi-easel"></i></div>
+              <h4 class="title"><a href="">Put your digital life on Auto Pilot</a></h4>
+              <p class="description">Automate password creation, saving, and typing so you can focus on more important tasks.</p>
+            </div>
+          </div><!--End Icon Box -->
+
+          <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="200">
+            <div class="icon-box">
+              <div class="icon"><i class="bi bi-gem"></i></div>
+              <h4 class="title"><a href="">Avoid weak, reused passwords</a></h4>
+              <p class="description">Our password manager generates strong, unique passwords for your accounts – and remembers every one for you.</p>
+            </div>
+          </div><!--End Icon Box -->
+
+          <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="300">
+            <div class="icon-box">
+              <div class="icon"><i class="bi bi-geo-alt"></i></div>
+              <h4 class="title"><a href="">Protect what's important to you</a></h4>
+              <p class="description">From family TV streaming logins to bank accounts, trust Safe Pass to securely generate, autofill, and protect your digital life.</p>
+            </div>
+          </div><!--End Icon Box -->
+
+          <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="400">
+            <div class="icon-box">
+              <div class="icon"><i class="bi bi-command"></i></div>
+              <h4 class="title"><a href="">Powerful security in minutes</a></h4>
+              <p class="description">Do more, secure more, and collaborate more! The Safe "Pass"word Manager is fast and easy to set up for both individuals and businesses.</p>
+            </div>
+          </div><!--End Icon Box -->
+
+        </div>
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    
+
+    <!-- About Alt Section -->
+    <section id="about-alt" class="about-alt section">
+
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="100">
+            <img src="{{url_for('static', filename='/img/about.svg')}}" class="img-fluid" alt="">
+            
+          </div>
+          <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="200">
+            <h2>Passwords made effortless</h2>
+            <p class="fst-italic">
+              Get powerful, trusted password security now.
+            </p>
+            <ul>
+              <li><i class="bi bi-check2-all"></i> <span>Save an item to your password manager and it auto-syncs across all your devices for instant access everywhere.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>LastPass autofills passwords and form fields so you can log in or check out with just one click.</span></li>
+              <li><i class="bi bi-check2-all"></i> <span>Store more than passwords in your vault, like credit cards, delivery addresses, Wi-Fi details, and documents.</span></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /About Alt Section -->
+
+    
+    <!-- Services Section -->
+    <section id="services" class="services section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Services</h2>
+        <p>What we're offering.</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4 justify-content-center"> <!-- Center the divs -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+              <div class="service-item item-cyan position-relative">
+                  <div class="icon">
+                      <img src="{{url_for('static', filename='/img/shield.gif')}}" width="100" height="100" alt="GIF Image">
+                  </div>
+                  <a href="{{url_for('static', filename='/templates/service-details.html')}}" class="stretched-link">
+                      <h3>Top-level Security</h3>
+                  </a>
+                  <p>Customers feel confident using LastPass due to its best-in-class security features that protect accounts and passwords against unauthorized access and data breaches.</p>
+              </div>
+          </div>
+      
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+              <div class="service-item item-orange position-relative">
+                  <div class="icon">
+                      <img src="{{url_for('static', filename='/img/checklist.gif')}}" width="100" height="100" alt="GIF Image">
+                  </div>
+                  <a href="{{url_for('static', filename='/templates/service-details.html')}}" class="stretched-link">
+                      <h3>Compliant to your needs</h3>
+                  </a>
+                  <p>Safe Pass holds many third-party security certifications, like ISO 27001, BSI C5, and TRUSTe, to remain compliant with our customers’ security and privacy standards.</p>
+              </div>
+          </div>
+      
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+              <div class="service-item item-teal position-relative">
+                  <div class="icon">
+                      <img src="{{url_for('static', filename='/img/checklist.gif')}}" width="100" height="100" alt="GIF Image">
+                  </div>
+                  <a href="{{url_for('static', filename='/templates/service-details.html')}}" class="stretched-link">
+                      <h3>Generate, share, and autofill strong passwords and passkeys</h3>
+                  </a>
+                  <p>Quickly and easily create and manage unique passwords and passkeys on your device wherever you are.</p>
+              </div>
+          </div>
+      </div><!-- End Service Item -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Services Section -->
+
+    <!-- Call To Action Section -->
+    <section id="call-to-action" class="call-to-action section accent-background">
+
+      <div class="container">
+        <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="100">
+          <div class="col-xl-10">
+            <div class="text-center">
+              <h3>Call To Action</h3>
+              <p>Protect your digital life with ease by signing up for our password manager app. Safeguard your sensitive information and keep your accounts secure with our advanced encryption technology. Take the first step towards better online security and peace of mind - sign up now!</p>
+              <a class="cta-btn" href="{{url_for('register')}}">Get Started</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /Call To Action Section -->
+    
+    <!-- Faq Section -->
+    <section id="faq" class="faq section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Frequently Asked Questions</h2>
+        <p>"The necessities lead to his consequent escape, some of them indeed are in a state of concealment, with the result that they are very much in the nature of a conspiracy."</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row justify-content-center">
+
+          <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="faq-container">
+
+
+              <div class="faq-item">
+                <h3>How does Safe Pass securely store passwords?</h3>
+                <div class="faq-content">
+                  <p>Your Safe Pass vault secures your data on your trusted device through zero-knowledge encryption. 
+                    Your device encrypts and hashes your passwords locally before sending them to Safe Pass servers. 
+                    The next time you need to log in, Safe Pass returns your encrypted passwords –
+                     which are decrypted by your trusted device.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Does Safe Pass have access to my passwords?</h3>
+                <div class="faq-content">
+                  <p>No, our zero-knowledge security model ensures your data remains yours: your master passwords and 
+                    anything you store in your password vault – passwords, credit cards, mailing addresses, secure notes – 
+                    are never visible or accessible to Safe Pass.
+                  </p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Where is the safest place to keep passwords?</h3>
+                <div class="faq-content">
+                  <p>The safest place to keep your passwords is in a password manager like LastPass. Password managers securely store your
+                     login credentials in an encrypted vault, ensuring that only you can access them. By using a password manager, you 
+                     can generate and store strong, unique passwords for each of your accounts, significantly reducing the risk of your 
+                     credentials being compromised. This method not only enhances your overall security but also simplifies the process
+                      of managing multiple passwords, making it easier to maintain good password hygiene.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>How does Safe Pass encryption work?</h3>
+                <div class="faq-content">
+                  <p>Safe Pass is built on a zero-knowledge encryption method, which ensures you are the only person who knows your master 
+                    password – the key used to decrypt your password vault. Thanks to 256-bit AES encryption and PBKDF2 derivation function
+                     with a secure hash (SHA256), with salting, your master password is never stored on our servers in its plaintext format,
+                      so only you will know what it is.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>How can I access Safe Pass?</h3>
+                <div class="faq-content">
+                  <p>LastPass is accessible on computers (MacOS, Windows, Linux, Safari, Chrome, Firefox, Edge) and mobile devices 
+                    (iOS, WatchOS, and Android). Free users can only use LastPass on one device type (computer or mobile), 
+                    while paid users have unlimited access.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+            </div>
+
+          </div><!-- End Faq Column-->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Faq Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact Us.</h2>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4">
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>Address</h3>
+                <p>2004, McNellie Drive</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p>+263 785 69 6692</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>safe_pass@prohacker.co.zw</p>
+              </div>
+            </div><!-- End Info Item -->
+
+          </div>
+
+          <div class="col-lg-8">
+            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                </div>
+
+                <div class="col-md-6 ">
+                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                </div>
+
+                <div class="col-md-12">
+                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                </div>
+
+                <div class="col-md-12">
+                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+                </div>
+
+                <div class="col-md-12 text-center">
+                  <div class="loading">Loading</div>
+                  <div class="error-message"></div>
+                  <div class="sent-message">Your message has been sent. Thank you!</div>
+
+                  <button type="submit">Send Message</button>
+                </div>
+
+              </div>
+            </form>
+          </div><!-- End Contact Form -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <footer id="footer" class="footer light-background">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-5 col-md-12 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="sitename">Safe Pass</span>
+          </a>
+          <p>Contact Us on any of our Socials.</p>
+          <div class="social-links d-flex mt-4">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+          <h4>Contact Us</h4>
+          <p>2004, McNellie Drive</p>
+          <p>Zimbabwe</p>
+          <p class="mt-4"><strong>Phone:</strong> <span>+263 785 69 6692</span></p>
+          <p><strong>Email:</strong> <span>safe_pass@prohacker.co.zw</span></p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Safe Pass</strong> <span>All Rights Reserved</span></p>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{{url_for('static', filename='/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    {{url_for('static', filename='/vendor/')}}
+  <script src="{{url_for('static', filename='/vendor/php-email-form/validate.js')}}"></script>
+  <script src="{{url_for('static', filename='/vendor/aos/aos.js')}}"></script>
+  <script src="{{url_for('static', filename='/vendor/purecounter/purecounter_vanilla.js')}}"></script>
+  <script src="{{url_for('static', filename='/vendor/glightbox/js/glightbox.min.js')}}"></script>
+  <script src="{{url_for('static', filename='/vendor/swiper/swiper-bundle.min.js')}}"></script>
+  <script src="{{url_for('static', filename='/vendor/swiper/imagesloaded/imagesloaded.pkgd.min.js')}}"></script>
+  <script src="{{url_for('static', filename='/vendor/swiper/isotope-layout/isotope.pkgd.min.js')}}"></script>
+
+  <!-- Main JS File -->
+  <script src="{{ url_for('static', filename='js/main.js')}} "></script>
+
+</body>
+
+</html>
