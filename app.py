@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, g
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import sleep
@@ -50,6 +50,8 @@ def init_db():
 def index():
     return render_template('index.html')
 
+
+########## General User Functionality ###############################################################################################
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -130,24 +132,52 @@ def add_password():
     sleep(1.3)
     return redirect(url_for('passwords'))
 
-@app.route('/delete_password/<int:id>', methods=['POST'])
+#########################################################################################################################################################
+
+########## delete password and it's own database functions###############################################################################################
+@app.route("/delete/<int:id>", methods=["POST"])
 def delete_password(id):
-    if 'user' not in session:
-        return redirect(url_for('login'))
+    user_id = session.get("user_id")  # Ensure user is logged in
 
-    user_id = session['user']['id']
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM passwords WHERE id = ? AND user_id = ?', (id, user_id))
+    print(f"DEBUG: Logged-in user ID -> {user_id}")
+    print(f"DEBUG: Attempting to delete password with ID -> {id}")
+
+    if not user_id:
+        print("DEBUG: Unauthorized access - No user ID in session")
+        return jsonify({"success": False, "error": "Unauthorized"}), 403
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # Print all user passwords before deletion attempt
+    cursor.execute("SELECT * FROM passwords WHERE user_id = ?", (user_id,))
+    all_passwords = cursor.fetchall()
+    print(f"DEBUG: All passwords for user {user_id}: {all_passwords}")
+
+    # Now, check if the specific password entry exists
+    cursor.execute("SELECT * FROM passwords WHERE id = ? AND user_id = ?", (id, user_id))
+    password_entry = cursor.fetchone()
+    print(f"DEBUG: Password entry found: {password_entry}")
+
+    if password_entry:
+        cursor.execute("DELETE FROM passwords WHERE id = ?", (id,))
         conn.commit()
+        conn.close()
 
-    return jsonify({"message": "Password deleted successfully"}), 200
+        print(f"DEBUG: Successfully deleted password ID {id}")
+        return jsonify({"success": True})
+    else:
+        conn.close()
+        print("DEBUG: Password entry not found or unauthorized")
+        return jsonify({"success": False, "error": "Not Found"}), 404
+
+#########################################################################################################################################################
 
 @app.route('/reset_password')
 def reset_password():
     return render_template('reset_password.html')
 
-######Dashboard Functions 
+######Dashboard Functions################################################################################################################################
 
 @app.route('/dashboard')
 def dashboard():
@@ -164,9 +194,6 @@ def dashboard():
 
         cursor = conn.cursor()
 
-        cursor.execute('SELECT service, username, password FROM passwords WHERE user_id = ?', (user_id,))
-        rows = cursor.fetchall()
-
         cursor.execute('SELECT COUNT(*) FROM passwords WHERE user_id = ?', (user_id,))
         total_passwords = cursor.fetchone()[0]
 
@@ -181,25 +208,18 @@ def dashboard():
 
         cursor.execute("SELECT COUNT(*) FROM notes WHERE user_id = ?", (user_id,))
         total_notes = cursor.fetchone()[0]
-
-        print("\nDEBUG: Retrieved passwords ->", rows)  #  Debugging
-
-    # Convert tuples into dictionaries for better template handling
-    passwords = [{'service': row[0], 'username': row[1], 'password': row[2]} for row in rows] 
     
     name = get_name(user_id)
     # Check if passwords are passed to the template
     response = render_template('dashboard.html', 
                             user=session['user'], 
-                            passwords=passwords,
                             total_passwords=total_passwords, 
                             strong_count=strong_count, 
                             weak_count=weak_count,
                             total_cards=total_cards,
                             total_notes=total_notes,
                             name=name)
-    print("\nDEBUG: Rendering dashboard with passwords ->", passwords) # Debugging
-    
+        
     return response
     
 def get_name(user_id):
@@ -215,11 +235,37 @@ def get_name(user_id):
     
     return result[0] if result else "Guest"  # Return name or default to "Guest"
 
+'''def fetch_data():
+    conn = sqlite3.connect("database.db")  # Connect to DB
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, service, password FROM users")  # Example query
+    rows = cursor.fetchall()  # Fetch all rows
 
+    # Convert to list of dictionaries
+    data = [{"id": row[0], "name": row[1], "email": row[2]} for row in rows]
+
+    conn.close()
+    return data'''
 
 @app.route('/passwords')
 def passwords():
-    return render_template('passwords.html')
+
+    if 'user' not in session:
+
+        print("User not found!!")
+        return redirect(url_for('dashboard'))
+    
+    user_id = session['user']['id']
+
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT service, username, password FROM passwords WHERE user_id = ?', (user_id,))
+        rows = cursor.fetchall()
+    
+    passwords = [{'service': row[0], 'username': row[1], 'password': row[2]} for row in rows] 
+
+    return render_template('passwords.html', passwords=passwords)
 
 @app.route('/cards')
 def cards(): 
@@ -241,7 +287,7 @@ def help():
 def terms(): 
     return render_template('terms.html')
 
-######Dashboard Functions
+#########################################################################################################################################################
 
 @app.route('/logout')
 def logout():
