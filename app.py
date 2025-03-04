@@ -300,10 +300,17 @@ def dashboard():
     very_weak_count = db_session.query(Password).filter_by(user_id=user_id, strength='Weak').count()
     total_cards = db_session.query(BankCard).filter_by(user_id=user_id).count()
     total_notes = db_session.query(Note).filter_by(user_id=user_id).count()
-
+    #initial code throwinf dicvision by zero error
+    #total_strong = strong_count + very_strong_count
+    #strength_percentage = (total_strong / total_passwords) * 100
+    #the fix below:
     total_strong = strong_count + very_strong_count
-    strength_percentage = (total_strong / total_passwords) * 100
 
+    if total_passwords > 0:
+        strength_percentage = (total_strong / total_passwords) * 100
+    else:
+        strength_percentage = 0
+        
     print(strength_percentage)
 
     name = get_name(user_id)
