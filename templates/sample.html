@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password List</title>
+</head>
+<body>
+
+    <h2>Saved Passwords</h2>
+
+    {% if passwords %}
+    <table border="1" cellspacing="0" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Username</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in passwords %}
+            <tr>
+                <td>{{ entry.service }}</td>
+                <td>{{ entry.username }}</td>
+                <td>{{ entry.password }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No saved passwords.</p>
+    {% endif %}
+
+</body>
+</html>
