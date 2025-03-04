@@ -1,50 +1,75 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, g
-import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import sleep
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.exc import IntegrityError
+from password_algos import password_strength
+from sqlalchemy import text
 
+Base = declarative_base()
+
+def get_engine():
+    return create_engine('sqlite:///database.db', echo=True)
+
+engine = get_engine()
+Session = sessionmaker(bind=engine)
+################### Database Initialization ################################################################################
+class User(Base):
+    __tablename__ = 'users'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    
+    passwords = relationship('Password', back_populates='user', cascade='all, delete-orphan')
+    bankcards = relationship('BankCard', back_populates='user', cascade='all, delete-orphan')
+    notes = relationship('Note', back_populates='user', cascade='all, delete-orphan')
+
+class Password(Base):
+    __tablename__ = 'passwords'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    service = Column(String, nullable=False)
+    username = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    strength = Column(String, nullable=False)
+    
+    user = relationship('User', back_populates='passwords')
+
+class BankCard(Base):
+    __tablename__ = 'bankcards'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    card_number = Column(String, nullable=False)
+    cardholder_name = Column(String, nullable=False)
+    expiration_date = Column(String, nullable=False)
+    cvv = Column(String, nullable=False)
+    
+    user = relationship('User', back_populates='bankcards')
+
+class Note(Base):
+    __tablename__ = 'notes'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    notes = Column(Text, nullable=False)
+    
+    user = relationship('User', back_populates='notes')
+
+def init_db():
+    engine = get_engine()
+    Base.metadata.create_all(engine)
+####################################################################################################################################
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-def init_db():
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        
-        # Create users table
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name TEXT,
-                            email TEXT UNIQUE,
-                            password TEXT)''')
 
-        # Create passwords table
-        cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            user_id INTEGER,
-                            service TEXT,
-                            username TEXT,
-                            password TEXT,
-                            strength TEXT,
-                            FOREIGN KEY(user_id) REFERENCES users(id))''')
-        
-        # Create bankcards table
-        cursor.execute('''CREATE TABLE IF NOT EXISTS bankcards(
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            user_id INTEGER,
-                            card_number TEXT,
-                            cardholder_name TEXT,
-                            expiration_date TEXT,
-                            cvv TEXT,
-                            FOREIGN KEY(user_id) REFERENCES users(id))''')
-        
-        #create notes table
-        cursor.execute('''CREATE TABLE IF NOT EXISTS notes(
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            user_id INTEGER,
-                            notes TEXT,
-                            FOREIGN KEY(user_id) REFERENCES users(id))''')
-        conn.commit()
 
 @app.route('/')
 def index():
@@ -57,120 +82,195 @@ def login():
     if request.method == 'POST':
         email = request.form.get('username')
         password = request.form.get('password')
-
-        with sqlite3.connect('database.db') as conn:
-            cursor = conn.cursor()
-
-            # Print all users to see what's stored
-            cursor.execute("SELECT email FROM users")
-            all_users = cursor.fetchall()
-            print(f"\nDEBUG: All stored emails in DB: {all_users}")
-
-            cursor.execute('SELECT id, name, email, password FROM users WHERE email = ?', (email,))
-            user = cursor.fetchone()
-
-            if user:
-                stored_hashed_password = user[3]
-                print(f"DEBUG: Found user with email {email}")
-                if check_password_hash(stored_hashed_password, password):
-                    session['user'] = {'id': user[0], 'name': user[1], 'email': user[2]}
-                    print("✅ Password matches! Logging in...")
-                    return redirect(url_for('dashboard'))
-                else:
-                    print("❌ Password does not match!")
-
+        
+        db_session = Session()
+        user = db_session.query(User).filter_by(email=email).first()
+        
+        if user:
+            stored_hashed_password = user.password
+            print(f"DEBUG: Found user with email {email}")
+            if check_password_hash(stored_hashed_password, password):
+                session['user'] = {'id': user.id, 'name': user.name, 'email': user.email}
+                print("✅ Password matches! Logging in...")
+                db_session.close()
+                return redirect(url_for('dashboard'))
             else:
-                print(f"❌ No user found with email: {email}")
-
+                print("❌ Password does not match!")
+        else:
+            print(f"❌ No user found with email: {email}")
+        
+        db_session.close()
         return "Invalid email or password", 401
-
+    
     return render_template('login.html')
 
 
 
+@app.route('/register', methods=['GET', 'POST'])
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         password = generate_password_hash(request.form['password'])  # Hash the password
-
-        with sqlite3.connect('database.db') as conn:
-            cursor = conn.cursor()
-            try:
-                cursor.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', (name, email, password))
-                conn.commit()
-                return redirect(url_for('login'))
-            except sqlite3.IntegrityError:
-                return 'User already exists'
+        
+        db_session = Session()
+        try:
+            new_user = User(name=name, email=email, password=password)
+            db_session.add(new_user)
+            db_session.commit()
+            db_session.close()
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db_session.rollback()
+            db_session.close()
+            return 'User already exists'
+    
     return render_template('registration.html')
 
 
 
+
 @app.route('/add_password', methods=['POST'])
-
 def add_password():
-
-    # Get form data
-
     url = request.form['url']
     username = request.form['username']
     password = request.form['password']
     strength = password_strength(password)
-    # Save data to the SQLite database
-
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO passwords (user_id, service, username, password, strength)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (1, url, username, password, strength))  # Replace `1` with the actual user ID
-        conn.commit()
     
-    # Provide feedback to the user
+    db_session = Session()
+    new_password = Password(user_id=session['user']['id'], service=url, username=username, password=password, strength=strength)
+    db_session.add(new_password)
+    db_session.commit()
+    db_session.close()
+    
     flash('Password added successfully!', 'success')
     sleep(1.3)
     return redirect(url_for('passwords'))
 
+@app.route('/add_card', methods=['POST'])
+def add_card(): 
+
+    cardholder_name = request.form.get('cardholder_name')
+    card_number = request.form.get('cardnumber')
+    cvv = request.form.get('cvv')
+    expiration_date = request.form.get('expiration_date')
+
+    db_session = Session()
+    new_card = BankCard(user_id=session['user']['id'],cardholder_name=cardholder_name, card_number=card_number, cvv=cvv, expiration_date=expiration_date )
+    db_session.add(new_card)
+    db_session.commit()
+    db_session.close()
+    flash('Password added successfully', 'success')
+    sleep(0.5)
+    return redirect(url_for('cards'))
+
+@app.route('/add_note', methods=['POST'])
+def add_note():
+
+    note = request.form.get('note')
+
+    db_session = Session()
+    new_note = Note(user_id = session['user']['id'], notes=note)
+
+    db_session.add(new_note)
+    db_session.commit()
+    db_session.close()
+
+    flash("New Note Added Successfully", "success")
+    sleep(0.5)
+    return redirect(url_for('notes'))
 #########################################################################################################################################################
 
-########## delete password and it's own database functions###############################################################################################
+
+########## delete functions and it's own database functions###############################################################################################
+
 @app.route("/delete/<int:id>", methods=["POST"])
 def delete_password(id):
-    user_id = session.get("user_id")  # Ensure user is logged in
-
-    print(f"DEBUG: Logged-in user ID -> {user_id}")
-    print(f"DEBUG: Attempting to delete password with ID -> {id}")
+    
+    user_id = session.get("user")["id"]  # Ensure user is logged in
 
     if not user_id:
-        print("DEBUG: Unauthorized access - No user ID in session")
         return jsonify({"success": False, "error": "Unauthorized"}), 403
 
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
+    db_session = Session()
+    
+    try:
+        # Use 'text' to explicitly declare the SQL expression
+        result = db_session.execute(
+            text("DELETE FROM passwords WHERE id = :id AND user_id = :user_id"),
+            {"id": id, "user_id": user_id}
+        )
+        db_session.commit()  # Ensure transaction is committed
 
-    # Print all user passwords before deletion attempt
-    cursor.execute("SELECT * FROM passwords WHERE user_id = ?", (user_id,))
-    all_passwords = cursor.fetchall()
-    print(f"DEBUG: All passwords for user {user_id}: {all_passwords}")
+        if result.rowcount > 0:
+            return jsonify({"success": True})
+        else:
+            print("DEBUG: Password entry not found or unauthorized")
+            return jsonify({"success": False, "error": "Not Found"}), 404
 
-    # Now, check if the specific password entry exists
-    cursor.execute("SELECT * FROM passwords WHERE id = ? AND user_id = ?", (id, user_id))
-    password_entry = cursor.fetchone()
-    print(f"DEBUG: Password entry found: {password_entry}")
+    except Exception as e:
+        db_session.rollback()
+        print(f"DEBUG: Exception occurred - {str(e)}")
+        return jsonify({"success": False, "error": "Internal Server Error"}), 500
+    finally:
+        db_session.close()
 
-    if password_entry:
-        cursor.execute("DELETE FROM passwords WHERE id = ?", (id,))
-        conn.commit()
-        conn.close()
+@app.route("/delete_card/<int:id>", methods=["POST"])
+def delete_card(id):
 
-        print(f"DEBUG: Successfully deleted password ID {id}")
-        return jsonify({"success": True})
-    else:
-        conn.close()
-        print("DEBUG: Password entry not found or unauthorized")
-        return jsonify({"success": False, "error": "Not Found"}), 404
+    user_id = session.get("user")["id"]
+    if not user_id:
+        return jsonify({"success": False, "error": "Unauthorized"}), 403
 
+    db_session = Session()
+
+    try:
+        result = db_session.execute(
+            text("DELETE FROM bankcards WHERE id = :id AND user_id = :user_id"),
+            {"id":id, "user_id": user_id}
+        )
+        db_session.commit()
+
+        if result.rowcount > 0:
+            return jsonify({"success": True})
+        else:
+            print("DEBUG: Password entry not found or unauthorized")
+            return jsonify({"success": False, "error": "Not Found"}), 404
+        
+    except Exception as e:
+        db_session.rollback()
+        print(f"DEBUG: Exception occurred - {str(e)}")
+        return jsonify({"success": False, "error": "Internal Server Error"}), 500
+    finally: 
+        db_session.close()
+
+@app.route("/delete_note/<int:id>", methods=["POST"])
+def delete_note(id):
+
+    user_id = session.get("user")["id"]
+    if not user_id:
+        return jsonify({"success": False, "error": "Unauthorized"}), 403
+
+    db_session = Session()
+
+    try:
+        result = db_session.execute(
+            text("DELETE FROM notes WHERE id = :id AND user_id = :user_id"),
+            {"id":id, "user_id":user_id}
+        )
+        db_session.commit()
+        if result.rowcount>0:
+            return jsonify({"success": True})
+        else:
+            print("DEBUG: Password entry not found or unauthorized")
+            return jsonify({"success": False, "error": "Not Found"}), 
+    except Exception as e:
+            db_session.rollback()
+            print(f"DEBUG: Exception occurred - {str(e)}")
+            return jsonify({"success": False, "error": "Internal Server Error"}), 500
+    finally: 
+        db_session.close()
 #########################################################################################################################################################
 
 @app.route('/reset_password')
@@ -182,58 +282,55 @@ def reset_password():
 @app.route('/dashboard')
 def dashboard():
 
+    
     if 'user' not in session:
-
         print("User not found!!")
         return redirect(url_for('login'))
     
     user_id = session['user']['id']
     print(f"\nDEBUG: Logged-in user ID -> {user_id}")  # Debugging
+
+    db_session = Session()
+
+    total_passwords = db_session.query(Password).filter_by(user_id=user_id).count()
+    strong_count = db_session.query(Password).filter_by(user_id=user_id, strength='Strong').count()
+    very_strong_count = db_session.query(Password).filter_by(user_id=user_id, strength='Very Strong').count()
     
-    with sqlite3.connect('database.db') as conn:
+    weak_count = db_session.query(Password).filter_by(user_id=user_id, strength='Weak').count()
+    very_weak_count = db_session.query(Password).filter_by(user_id=user_id, strength='Weak').count()
+    total_cards = db_session.query(BankCard).filter_by(user_id=user_id).count()
+    total_notes = db_session.query(Note).filter_by(user_id=user_id).count()
 
-        cursor = conn.cursor()
+    total_strong = strong_count + very_strong_count
+    strength_percentage = (total_strong / total_passwords) * 100
 
-        cursor.execute('SELECT COUNT(*) FROM passwords WHERE user_id = ?', (user_id,))
-        total_passwords = cursor.fetchone()[0]
+    print(strength_percentage)
 
-        cursor.execute("SELECT COUNT(*) FROM passwords WHERE user_id = ? AND strength = 'Strong'", (user_id,))
-        strong_count = cursor.fetchone()[0]
-
-        cursor.execute("SELECT COUNT(*) FROM passwords WHERE user_id = ? AND strength = 'weak'", (user_id,))
-        weak_count = cursor.fetchone()[0]
-
-        cursor.execute("SELECT COUNT(*) FROM bankcards WHERE user_id = ?", (user_id,))
-        total_cards = cursor.fetchone()[0]
-
-        cursor.execute("SELECT COUNT(*) FROM notes WHERE user_id = ?", (user_id,))
-        total_notes = cursor.fetchone()[0]
-    
     name = get_name(user_id)
-    # Check if passwords are passed to the template
-    response = render_template('dashboard.html', 
-                            user=session['user'], 
-                            total_passwords=total_passwords, 
-                            strong_count=strong_count, 
-                            weak_count=weak_count,
-                            total_cards=total_cards,
-                            total_notes=total_notes,
-                            name=name)
-        
-    return response
+     
+    db_session.close()
+
+    return render_template(
+        'dashboard.html', 
+        user=session['user'], 
+        total_passwords=total_passwords, 
+        very_strong_count=very_strong_count,
+        very_weak_count=very_weak_count,
+        strong_count=strong_count, 
+        weak_count=weak_count,
+        total_cards=total_cards,
+        total_notes=total_notes,
+        name=name, 
+        strength_percentage=strength_percentage
+    )
+
     
 def get_name(user_id):
-
+    db_session = Session()
+    user = db_session.query(User.name).filter_by(id=user_id).first()
+    db_session.close()
     
-    conn = sqlite3.connect("database.db")  # Connect to the database
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT name FROM users WHERE id = ?", (user_id,))  # Use user_id from session
-    result = cursor.fetchone()  # Fetch one result
-    
-    conn.close()
-    
-    return result[0] if result else "Guest"  # Return name or default to "Guest"
+    return user.name if user else "Guest"
 
 '''def fetch_data():
     conn = sqlite3.connect("database.db")  # Connect to DB
@@ -251,29 +348,51 @@ def get_name(user_id):
 def passwords():
 
     if 'user' not in session:
-
         print("User not found!!")
         return redirect(url_for('dashboard'))
     
     user_id = session['user']['id']
 
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
+    db_session = Session()
+    rows = db_session.query(Password.service, Password.username, Password.password, Password.id).filter_by(user_id=user_id).all()
 
-        cursor.execute('SELECT service, username, password FROM passwords WHERE user_id = ?', (user_id,))
-        rows = cursor.fetchall()
+    db_session.close()
     
-    passwords = [{'service': row[0], 'username': row[1], 'password': row[2]} for row in rows] 
-
+    passwords = [{'service': row[0], 'username': row[1], 'password': row[2], 'id':row[3]} for row in rows] 
+    
     return render_template('passwords.html', passwords=passwords)
 
 @app.route('/cards')
 def cards(): 
-    return render_template('cards.html')
+
+    if 'user' not in session:
+        print("User Not Found!!")
+        return redirect(url_for('dashboard'))
+    
+    user_id = session['user']['id']
+    db_session = Session()
+    data = db_session.query(BankCard.card_number, BankCard.cardholder_name, BankCard.cvv, BankCard.expiration_date, BankCard.id).filter_by(user_id=user_id).all()
+
+    db_session.close()
+    bankcards = [{'card_number': row[0], 'cardholder_name': row[1], 'cvv':row[2], 'expiration_date': row[3], 'id':row[4]} for row in data]
+
+    return render_template('cards.html', bankcards=bankcards)
 
 @app.route('/notes')
 def notes(): 
-    return render_template('notes.html')
+
+    if 'user' not in session:
+        print("User not found!!")
+        return redirect(url_for('dashboard'))
+    
+    user_id = session['user']['id']
+    db_session = Session()
+    data = db_session.query(Note.notes, Note.id).filter_by(user_id=user_id).all()
+
+    db_session.close()
+    notes = [{'note_content': row[0], 'id': row[1]} for row in data]
+
+    return render_template('notes.html', notes=notes)
 
 @app.route('/settings')
 def settings(): 
@@ -289,42 +408,17 @@ def terms():
 
 #########################################################################################################################################################
 
-@app.route('/logout')
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
-    session.pop('user', None)
-    return redirect(url_for('index'))
+    if request.method == "POST":
+        session.pop('user', None)
+        return redirect(url_for('index'))
+    else:
+        flash("Could Not Logout!!")
+    return render_template('logout.html')
 
 
-import string
-
-def password_strength(password):
-    
-    #established test criteria
-    length = len(password) >= 12
-    lowercase = any(c.islower() for c in password)
-    uppercase = any(c.isupper() for c in password)
-    number = any(c.isdigit() for c in password)
-    special = any(c in string.punctuation for c in password)
-    common_passwords = {
-    "password", "123456", "123456789", "12345678", "12345", "1234567", "qwerty", 
-    "abc123", "letmein", "monkey", "iloveyou", "trustno1", "dragon", "baseball", 
-    "football", "starwars", "123123", "welcome", "admin", "password1", 
-    "qwertyuiop", "123321", "superman", "1q2w3e4r", "sunshine", "ashley", 
-    "bailey", "passw0rd", "shadow", "master"
-    }
-    
-     # Check for common passwords
-    if password in common_passwords:
-        return "Very Weak" 
-
-    if length and (lowercase or uppercase or number or special):
-        if length >= 12 and lowercase and uppercase and number and special:
-            return "Very Strong"
-        else:
-            return "Strong"
-
-    return "Weak"
-
+##########################################################################################################################
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
