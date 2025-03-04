@@ -1,0 +1,115 @@
+/* Styling for the input field */
+#cardnumber {
+    background-color: #ffffff !important; /* Ensure White Background */
+    color: #000000 !important; /* Black Text for High Contrast */
+    border: 1px solid #ced4da; /* Bootstrap Default Border */
+    padding: 10px; /* Improve Spacing */
+    font-size: 16px; /* Increase Readability */
+    border-radius: 5px; /* Slight Rounded Corners */
+}
+
+/* Placeholder Styling */
+#cardnumber::placeholder {
+    color: #6c757d; /* Darken Placeholder for Visibility */
+    opacity: 1; /* Ensure Full Opacity */
+}
+
+/* Highlight Input on Focus */
+#cardnumber:focus {
+    border-color: #007bff; /* Bootstrap Primary Color on Focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Ensure label is readable */
+.form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Styling for the input field */
+#cardholder_name {
+    background-color: #ffffff !important; /* Ensure White Background */
+    color: #000000 !important; /* Black Text for High Contrast */
+    border: 1px solid #ced4da; /* Bootstrap Default Border */
+    padding: 10px; /* Improve Spacing */
+    font-size: 16px; /* Increase Readability */
+    border-radius: 5px; /* Slight Rounded Corners */
+}
+
+/* Placeholder Styling */
+#cardholder_name::placeholder {
+    color: #6c757d; /* Darken Placeholder for Visibility */
+    opacity: 1; /* Ensure Full Opacity */
+}
+
+/* Highlight Input on Focus */
+#cardholder_name:focus {
+    border-color: #007bff; /* Bootstrap Primary Color on Focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Ensure label is readable */
+.form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Styling for the input field */
+#cvv {
+    background-color: #ffffff !important; /* Ensure White Background */
+    color: #000000 !important; /* Black Text for High Contrast */
+    border: 1px solid #ced4da; /* Bootstrap Default Border */
+    padding: 10px; /* Improve Spacing */
+    font-size: 16px; /* Increase Readability */
+    border-radius: 5px; /* Slight Rounded Corners */
+}
+
+/* Placeholder Styling */
+#cvv::placeholder {
+    color: #6c757d; /* Darken Placeholder for Visibility */
+    opacity: 1; /* Ensure Full Opacity */
+}
+
+/* Highlight Input on Focus */
+#cvv:focus {
+    border-color: #007bff; /* Bootstrap Primary Color on Focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Ensure label is readable */
+.form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Styling for the input field */
+#expiration_date {
+    background-color: #ffffff !important; /* Ensure White Background */
+    color: #000000 !important; /* Black Text for High Contrast */
+    border: 1px solid #ced4da; /* Bootstrap Default Border */
+    padding: 10px; /* Improve Spacing */
+    font-size: 16px; /* Increase Readability */
+    border-radius: 5px; /* Slight Rounded Corners */
+}
+
+/* Placeholder Styling */
+#expiration_date::placeholder {
+    color: #6c757d; /* Darken Placeholder for Visibility */
+    opacity: 1; /* Ensure Full Opacity */
+}
+
+/* Highlight Input on Focus */
+#expiration_date:focus {
+    border-color: #007bff; /* Bootstrap Primary Color on Focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Ensure label is readable */
+.form-label {
+    font-weight: 600;
+    color: #333;
+}
