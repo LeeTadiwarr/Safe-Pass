@@ -9,10 +9,10 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
 		
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="{{url_for('static', filename='css/dashboard.css')}}">
+		<link rel="stylesheet" href="{{url_for('static', filename='css/dashboard.css')}}"> 
   </head>
   <body>
-		
+		 
 		<div class="wrapper d-flex align-items-stretch">
 			<nav id="sidebar">
 				<div class="custom-menu">
@@ -88,23 +88,32 @@
 					<div class="row">
 						<!-- Left Side Stats -->
 						<div class="col-6">
+
 							<div class="p-3 mb-2 text-center" style="background: rgba(255, 255, 255, 0.2); border-radius: 8px;">
 								<h3 class="mb-0">{{total_passwords}}</h3>
-								<small>Total Password</small>
+								<small>Total Passwords</small>
 							</div>
 							<div class="p-3 text-center" style="background: rgba(255, 255, 255, 0.2); border-radius: 8px;">
 								<h3 class="mb-0">{{strong_count}}</h3>
-								<small>Secure Password</small>
+								<small>Secure Passwords</small>
 							</div>
 						</div>
 			
 						<!-- Right Side Stats -->
 						<div class="col-6">
-							<div class="p-2 text-center fw-bold" style="background: white; color: #dc3545; border-radius: 8px;">
-								<h4 class="mb-0">{{weak_count}}</h4>
+
+							<div class="p-3 mb-2 text-center fw-bold mb-3" style="background: white; color: #dc3545; border-radius: 8px;">
+								<h4 class="mb-0">{{ weak_count }}</h4>
 								<small>Weak Password</small>
 							</div>
+						
+							<div class="p-3 mb-2 text-center fw-bold" style="background: white; color: #dc3545; border-radius: 8px;">
+								<h4 class="mb-0">{{ very_weak_count }}</h4>
+								<small> Very Weak Passwords</small>
+							</div>
+						
 						</div>
+						
 					</div>
 			
 					<!-- Score Health Progress Bar -->
