@@ -21,7 +21,7 @@ Ensure you have the following installed:
 ### Steps to Install
 1. **Clone the Repository**
 ```bash
-   git clone https://github.com/your-username/password-manager.git
+   git clone https://github.com/LeeTadiwarr/password-manager.git
    cd password-manager
 ```
 
