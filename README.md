@@ -77,12 +77,13 @@ The app will be available at `http://127.0.0.1:5000/`(local machine)
 - ✅ **Encrypted Password Storage**
 - ✅ **Password Generator**
 
----
+----
 
 ## Contributing
-Want to contribute? Fork the repository and submit a pull request!
+Want to contribute? Fork the repository and submit a pull request.
 
----
+
+----
 
 ## License
 This project is licensed under the MIT License. See `LICENSE` for more details.
