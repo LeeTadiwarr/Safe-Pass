@@ -90,6 +90,6 @@ This project is licensed under the MIT License. See `LICENSE` for more details.
 ---
 
 ## Contact
-📧 **Email:** kesleygwa@example.com
+📧 **Email:** kesleygwa@gmail.com
 
 💻 **GitHub:** (https://github.com/LeeTadiwarr)
