@@ -60,7 +60,7 @@ The app will be available at `http://127.0.0.1:5000/`(local machine)
 4. **Autofill** login fields with saved passwords.
 5. **Manage or Delete Passwords** as needed.
 6. Store and Retrieve bank cards
-7. Store and Retrieve Notes
+7. Store and Retrieve Notes.
 
 
 ## Technologies Used
